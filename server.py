@@ -1,4 +1,5 @@
 import socket
+import stun
 
 def start_server():
     port = 8000  # Server port
@@ -8,6 +9,12 @@ def start_server():
 
     s.listen(1)  # Wait for the client connection.
     print('Server is listening...')
+
+    nat_type, external_ip, external_port = stun.get_ip_info()
+
+    print('NAT Type:', nat_type)
+    print('Public IP:', external_ip)
+    print('Public Port:', external_port)
 
     conn, addr = s.accept()  # Establish a connection with the client.
     print('Got connection from', addr)
