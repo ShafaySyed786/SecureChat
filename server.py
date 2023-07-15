@@ -10,7 +10,7 @@ def start_server():
     s.listen(1)  # Wait for the client connection.
     print('Server is listening...')
 
-    nat_type, external_ip, external_port = stun.get_ip_info()
+    nat_type, _, external_ip, external_port = stun.get_ip_info()
 
     print('NAT Type:', nat_type)
     print('Public IP:', external_ip)

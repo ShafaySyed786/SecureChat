@@ -2,13 +2,13 @@ import socket
 import stun
 
 def start_client():
-    host = '10.0.0.74'  # replace <IP_OF_SERVER> with the server machine's IP
+    host = input("Enter the server IP: ")  # Get the server IP
     port = 8000  # Server port
 
     s = socket.socket()  # Create a socket object
-    s.connect((host, port))  # Bind to the port
+    s.connect((host, port))  # Connect to the server
 
-    nat_type, external_ip, external_port = stun.get_ip_info()
+    nat_type, _, external_ip, external_port = stun.get_ip_info()
 
     print('NAT Type:', nat_type)
     print('Public IP:', external_ip)
