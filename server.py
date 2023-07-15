@@ -1,5 +1,5 @@
 import socket
-import stun
+import requests
 
 def start_server():
     port = 8000  # Server port
@@ -10,9 +10,9 @@ def start_server():
     s.listen(1)  # Wait for the client connection.
     print('Server is listening...')
 
-    nat_type, _, external_ip, external_port = stun.get_ip_info()
+    external_ip = requests.get('https://api.ipify.org').text
+    external_port = port
 
-    print('NAT Type:', nat_type)
     print('Public IP:', external_ip)
     print('Public Port:', external_port)
 
@@ -23,7 +23,7 @@ def start_server():
         data = conn.recv(1024).decode()  # Receive data from the client.
         if not data:
             break
-        print('Received from client: ' + data)
+        print('Received from client:', data)
 
         data = input(' -> ')
         conn.send(data.encode())  # Send data to the client.
