@@ -1,11 +1,10 @@
 import socket
 
 def start_server():
-    host = 'localhost'  # Host IP
     port = 8000  # Server port
 
     s = socket.socket()  # Create a socket object
-    s.bind((host, port))  # Bind to the port
+    s.bind(('', port))  # Bind to the port
 
     s.listen(1)  # Wait for the client connection.
     print('Server is listening...')

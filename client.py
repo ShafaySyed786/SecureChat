@@ -1,7 +1,5 @@
-import socket
-
 def start_client():
-    host = 'localhost'  # Host IP
+    host = '<IP_OF_SERVER>'  # replace <IP_OF_SERVER> with the server machine's IP
     port = 8000  # Server port
 
     s = socket.socket()  # Create a socket object
