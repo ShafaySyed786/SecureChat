@@ -1,30 +1,21 @@
-import socket
-import threading
-import stun
+import socketio
 
-def start_client():
-    host = input("Enter the server IP: ")  # Enter the server's IP address
-    port = 8000  # Server port
+sio = socketio.Client()
 
-    s = socket.socket()  # Create a socket object
-    s.connect((host, port))  # Connect to the server
+@sio.on('message')
+def handle_message(message):
+    print('Received message:', message)
 
-    nat_type, external_ip, external_port = stun.get_ip_info()
-
-    print('NAT Type:', nat_type)
-    print('Public IP:', external_ip)
-    print('Public Port:', external_port)
-
-    while True:
-        data = input(' -> ')
-        s.send(data.encode())  # Send data to the server.
-
-        data = s.recv(1024).decode()  # Receive data from the server.
-        if not data:
-            break
-        print('Received from server: ' + data)
-
-    s.close()  # Close the connection
+def send_message(message):
+    sio.emit('message', message)
 
 if __name__ == '__main__':
-    start_client()
+    sio.connect('http://172.28.231.231:5000')
+
+    while True:
+        message = input('Enter message (or "exit" to quit): ')
+        if message == 'exit':
+            break
+        send_message(message)
+
+    sio.disconnect()
