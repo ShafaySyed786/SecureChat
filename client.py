@@ -1,21 +1,26 @@
-import socketio
+import socket
+import threading
 
-sio = socketio.Client()
+HOST = '16.171.162.94'  # Replace with the server's public IP address or domain name
+PORT = 5000
 
-@sio.on('message')
-def handle_message(message):
-    print('Received message:', message)
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect((HOST, PORT))
 
-def send_message(message):
-    sio.emit('message', message)
-
-if __name__ == '__main__':
-    sio.connect('http://172.28.231.231:5000')
-
+def receive_messages():
     while True:
-        message = input('Enter message (or "exit" to quit): ')
-        if message == 'exit':
-            break
-        send_message(message)
+        data = client_socket.recv(1024).decode()
+        print('Received message:', data)
 
-    sio.disconnect()
+receive_thread = threading.Thread(target=receive_messages)
+receive_thread.start()
+
+while True:
+    message = input('Enter message (or "exit" to quit): ')
+
+    if message == 'exit':
+        break
+
+    client_socket.sendall(message.encode())
+
+client_socket.close()

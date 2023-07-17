@@ -1,18 +1,37 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
+import socket
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+HOST = '0.0.0.0'
+PORT = 5000
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind((HOST, PORT))
+server_socket.listen()
 
-@socketio.on('message')
-def handle_message(message):
-    print('Received message: ' + message)
-    emit('message', message, broadcast=True)
+print('Server listening on {}:{}'.format(HOST, PORT))
 
-if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0')
+client_sockets = []
+
+def handle_client(client_socket):
+    while True:
+        data = client_socket.recv(1024).decode()
+
+        if not data:
+            break
+
+        print('Received message:', data)
+
+        # Send the message to all connected clients except the sender
+        for socket in client_sockets:
+            if socket != client_socket:
+                socket.sendall(data.encode())
+
+    client_socket.close()
+
+while True:
+    client_socket, client_address = server_socket.accept()
+    print('Connected to client:', client_address)
+
+    client_sockets.append(client_socket)
+
+    # Start a new thread to handle the client's messages
+    handle_client(client_socket)
